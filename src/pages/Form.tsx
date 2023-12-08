@@ -1,22 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Box, Container, TextField, Typography, Paper } from '@mui/material';
+//import { Link } from 'react-router-dom';
 
-const Form = () => {
+const Form = (props: { data: (arg0: boolean) => void }) => {
 	const defaultFormData = {
 		name: '',
 		phoneNumber: '',
 		email: '',
 	};
-	const [user, setUser] = useState(defaultFormData);
 
-	const handleInput = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+	const [user, setUser] = useState(defaultFormData);
+	const [isDataProvided, setIsDataProvided] = useState(false);
+
+	const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setUser({ ...user, [e.target.name]: e.target.value });
 	};
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
-		console.log(user);
+		if (user.name === '' || user.phoneNumber === '' || user.email === '') {
+			setIsDataProvided(false);
+			alert('Please enter all the details.');
+		} else {
+			setIsDataProvided(true);
+			localStorage.setItem('user', JSON.stringify(user));
+		}
 	};
+
+	useEffect(() => {
+		const handleProp = () => {
+			props.data(isDataProvided);
+		};
+		handleProp();
+	}, [isDataProvided, props]);
 
 	return (
 		<>
